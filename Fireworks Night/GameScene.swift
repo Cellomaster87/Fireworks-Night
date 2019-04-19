@@ -25,6 +25,7 @@ class GameScene: SKScene {
         }
     }
 
+    // MARK: - Scene management
     override func didMove(to view: SKView) {
         let background = SKSpriteNode(imageNamed: "background")
         background.position = CGPoint(x: 512, y: 384)
@@ -34,10 +35,54 @@ class GameScene: SKScene {
         
         // create a timer that launches fireworks every six seconds
         gameTimer = Timer.scheduledTimer(timeInterval: 6, target: self, selector: #selector(launchFireworks), userInfo: nil, repeats: true)
-        
     }
     
-    // Create Firework: three parameters, the x-movement speed, then x,y position for creation
+    override func update(_ currentTime: TimeInterval) {
+        for (index, firework) in fireworks.enumerated().reversed() {
+            if firework.position.y > 900 {
+                // this uses a position high above so that rockets can explode off screen
+                fireworks.remove(at: index)
+                firework.removeFromParent()
+            }
+        }
+    }
+    
+    // MARK: - Touches management
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        checkTouches(touches)
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesMoved(touches, with: event)
+        checkTouches(touches)
+    }
+    
+    // Touch handling method
+    func checkTouches(_ touches: Set<UITouch>) {
+        guard let touch = touches.first else { return }
+        
+        let location = touch.location(in: self)
+        let nodesAtPoint = nodes(at: location)
+        
+        for case let node as SKSpriteNode in nodesAtPoint { // it will make a new SKSpriteNode contant only if that condition is true
+            guard node.name == "firework" else { continue }
+            
+            for parent in fireworks {
+                guard let firework = parent.children.first as? SKSpriteNode else { continue }
+                
+                if firework.name == "selected" && firework.color != node.color {
+                    firework.name = "firework"
+                    firework.colorBlendFactor = 1
+                }
+            }
+            
+            node.name = "selected"
+            node.colorBlendFactor = 0 // default texture color (white)
+        }
+    }
+    
+    // MARK: - Helper methods
     func createFirework(xMovement: CGFloat, x: Int, y: Int) {
         // create an SKNode as firework container
         let node = SKNode()
