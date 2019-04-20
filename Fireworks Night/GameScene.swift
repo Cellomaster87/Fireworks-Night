@@ -13,6 +13,7 @@ class GameScene: SKScene {
     // MARK: Properties
     var gameTimer: Timer? // used to call the launchFireworks() method every six seconds
     var fireworks = [SKNode]() // contained node with other nodes to avoid accidental taps
+    var launchesCompleted = 0
     
     // Where we launch the fireworks from
     let leftEdge = -22
@@ -174,6 +175,11 @@ class GameScene: SKScene {
         
         default:
             break
+        }
+        
+        launchesCompleted += 1
+        if launchesCompleted == 5 {
+            gameTimer?.invalidate()
         }
     }
     
