@@ -190,7 +190,9 @@ class GameScene: SKScene {
             addChild(emitter)
         }
         
-        firework.removeFromParent()
+        let wait = SKAction.wait(forDuration: 3.0)
+        let sequence = SKAction.sequence([wait, .removeFromParent()])
+        firework.run(sequence)
     }
     
     // Explode multiple fireworks together
