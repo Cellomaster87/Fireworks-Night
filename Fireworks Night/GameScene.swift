@@ -19,9 +19,12 @@ class GameScene: SKScene {
     let bottomEdge = -22
     let rightEdge = 1024 + 22
     
+    // add a score label
+    var scoreLabel: SKLabelNode!
+    
     var score = 0 {
         didSet {
-            #warning("To do later.")
+            scoreLabel.text = "Score: \(score)"
         }
     }
 
@@ -32,6 +35,14 @@ class GameScene: SKScene {
         background.blendMode = .replace
         background.zPosition = -1
         addChild(background)
+        
+        scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+        scoreLabel.text = "Score: 0"
+        scoreLabel.position = CGPoint(x: 16, y: 16)
+        scoreLabel.horizontalAlignmentMode = .left
+        addChild(scoreLabel)
+        
+        score = 0
         
         // create a timer that launches fireworks every six seconds
         gameTimer = Timer.scheduledTimer(timeInterval: 6, target: self, selector: #selector(launchFireworks), userInfo: nil, repeats: true)
